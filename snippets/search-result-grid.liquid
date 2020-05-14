@@ -87,7 +87,6 @@
             </a>
           </div>
           {%- endif -%}
-          
         </div>
       </div>
       <div class="product-meta">
@@ -112,7 +111,7 @@
         
         {%- if settings.theme_wishlist_enable -%}
            {% if settings.wishlist_nologin == 'yes' or settings.wishlist_nologin == '' %}
-              {% include 'wishlist-button'%}
+              {% include 'wishlist-button' %}
            {% elsif settings.wishlist_nologin == 'no' %}
              <div class="add-wishlist">
                {% include 'wishlist-product' %}
@@ -120,7 +119,7 @@
            {% endif %}
         {%- endif -%}
         {%- if settings.theme_compare_enable -%}        
-          <div class='ap-cp-add-compare ap_cp_add '>
+          <div class='ap-cp-add-compare ap_cp_add'>
             <input type="checkbox" data-img="{{ product.featured_image.src | img_url: grid_image_width }}" data-title="{{product.title}}" data-id="{{ product.handle }}" class="ap-cp-add" title="Compare">
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><g><g><g><polygon points="179.456,307.2 0,307.2 0,358.4 179.456,358.4 179.456,435.2 281.6,332.8 179.456,230.4 "/><polygon points="332.544,153.6 332.544,76.8 230.4,179.2 332.544,281.6 332.544,204.8 512,204.8 512,153.6 "/></g></g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
           </div>
@@ -136,9 +135,20 @@
           {%- if on_sale -%}
           <span class="old-price product-price">{{ product.compare_at_price | money }}</span>
           {%- endif -%}
+          
+          {%- if product.price_min == product.price_max -%}
           <span class="price product-price {% if on_sale %}sale-price{% endif %}">
             {{ product.price | money }}
           </span>
+          {%- else -%}
+          <span class="price product-price {% if on_sale %}sale-price{% endif %}">
+            {{ product.price_min | money }}         
+          </span>
+          -
+          <span class="price product-price {% if on_sale %}sale-price{% endif %}"> 
+            {{ product.price_max | money }}      
+          </span>
+          {%- endif -%}
           
         </div>    
         <div class="cart">

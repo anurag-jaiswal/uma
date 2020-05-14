@@ -2103,6 +2103,7 @@ theme.Product = (function() {
       slidesToScroll: 4,
       infinite: true,
       rtl:checkrtl,
+      dots:true,
       prevArrow: '.thumbnails-slider__prev--' + this.settings.sectionId,
       nextArrow: '.thumbnails-slider__next--' + this.settings.sectionId,
       responsive: [
