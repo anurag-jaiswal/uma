@@ -27,6 +27,7 @@ $(document).ready(function() {
     hover_product();
     grid_view();
     filter_bar();
+  swap_image();
     $('[data-toggle="tooltip"]').tooltip();  
   	lawCookie();
     //var height_header = $('#header').outerHeight(true);
@@ -530,12 +531,12 @@ function quickViewVariantsSwatch(t, quickview) {
                         }
                         a += '<input id="' + d + '" type="radio" name="option-' + r + '" value="' + h + '" ' + (c == 0 ? " checked " : "") + (i.available ? "" : " disabled") + " />";
                         if (f) {
-                          	{% if settings.enable_image_qv %}
+                          if (i.featured_image !== null){
                           	var imageVariantSrc = i.featured_image.src;
                           	a += '<label class= " swatch_{{settings.style_swatch}} '+ p +'" for="' + d + '" style="background-color: ' + p + "; background-image: url(" + imageVariantSrc+ ')"><img class="crossed-out" src="' + u + 'soldout.png" /><i></i></label>'
-                            {% else %}
+                          }else{
 							a += '<label class= " swatch_{{settings.style_swatch}} '+ p +'" for="' + d + '" style="background-color: ' + p + "; background-image: url(" + o + p + '.png )"><img class="crossed-out" src="' + u + 'soldout.png" /><i></i></label>'
-                            {% endif %}
+                          }
                         }
                         else {
                             a += '<label class="'+ p +'" for="' + d + '">' + h + '<img class="crossed-out" src="' + u + 'soldout.png" /></label>'
@@ -814,6 +815,7 @@ function floatTopbar(){
                 },
                 complete: function(a) {
                 d.filterMapData(a), d.hideLoading(), d.filterMapPaging(), d.sidebarMapTagEvents();
+                  swap_image();
                 updateInitAjax();
                $('.wishlist-btn').bind('click',function(selector) {
                 selector.preventDefault();
@@ -906,11 +908,13 @@ function floatTopbar(){
                         elements.each(function() {
                             var title = $.trim(this.getAttribute('data-title'));
                             var price = $.trim(this.getAttribute('data-price'));
+                          	var mprice = $.trim(this.getAttribute('data-mprice')) || '';
                             var handle = $.trim(this.getAttribute('data-handle'));
                             var image = $.trim(this.getAttribute('data-img'));
                             var item = new Object();
                                 item.title = title;
                                 item.price = price;
+                          		item.mprice = mprice;
                                 item.handle = handle;
                                 item.featured_image = image;
                             result.push(item);
@@ -937,12 +941,14 @@ function floatTopbar(){
                 var item = products[i];
                 var title = item.title;
                 var price = item.price;
+                var mprice = item.mprice;
                 var handle = item.handle;
                 var image = item.featured_image;
                 if (title.toLowerCase().indexOf(keyword) > -1) {
                   var j = j + 1;
                   var markedString = title.replace(new RegExp('(' + keyword + ')', 'gi'), '<span class="marked">$1</span>');
-                  var template = '<li class="product-block"><a class="product_img_link" href="/products/' + handle + '">' + '<img style="max-width: 80px; float: left;margin-right: 5px" src="' + image + '" />' + '</a><a class="product-name" href="/products/' + handle + '">' + markedString + '</a><div class="content_price"><span class="price product-price">' + price + '</span></div></li>';
+                  var mPriceText = mprice !== '' ? ' - <span class="price product-price">'+mprice+'</span>' : '';
+                  var template = '<li class="product-block"><a class="product_img_link" href="/products/' + handle + '">' + '<img style="max-width: 80px; float: left;margin-right: 5px" src="' + image + '" />' + '</a><a class="product-name" href="/products/' + handle + '">' + markedString + '</a><div class="content_price"><span class="price product-price">' + price + '</span>'+mprice+'</div></li>';
                   if (j <= {{settings.ajaxsearch_maxresult | plus: 0}}) {
                     result.append(template);
                   }
@@ -1195,3 +1201,16 @@ function updateInitAjax(){
     SPR.initRatingHandler(), SPR.initDomEls(), SPR.loadProducts(), SPR.loadBadges()
 }
 
+
+         function swap_image() {
+    jQuery(".item-swatch li label").click(function() {
+      var r = jQuery(this).parent().find(".hidden a").attr("href");
+      var similarObject = jQuery(this).parents(".item-swatch").find('li');
+      similarObject.removeClass('active');
+      jQuery(this).parent().addClass('active');
+      return jQuery(this).parents(".product-block").find(".product_img_link img").attr({
+        srcset: r
+      }),
+        !1
+    })
+  }

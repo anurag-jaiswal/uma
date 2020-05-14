@@ -40,7 +40,14 @@
       {%- assign product_description_width = 'col-xs-12 col-md-5' -%}
   {% endcase %}
   
-  <div id="center_column" class="center_column {% if settings.sidebar_detail_enable %}{{ column_center }} {% endif %} {% if settings.sidebar_detail_enable and section.settings.position_sidebar == "left" %} pull-right {% endif %}">
+  {% assign singleSize = false %}
+  {% for tag in product.tags %}
+  {% if tag == 'singleSize' %}
+  {% assign singleSize = true %}
+  {% endif %}
+  {% endfor %}
+  
+  <div id="center_column" class="center_column {% if singleSize %}singleSize{% endif %} {% if settings.sidebar_detail_enable %}{{ column_center }} {% endif %} {% if settings.sidebar_detail_enable and section.settings.position_sidebar == "left" %} pull-right {% endif %}">
     <div class="product-template__content">
       <div class=" {% unless settings.sidebar_detail_enable %} {{section.settings.set_layoutproduct}} {% endunless %}">
       <div class="row product-single">
@@ -51,8 +58,9 @@
             <div class="block__lager">
               <div class="slider-for my-gallery" itemscope itemtype="http://schema.org/ImageGallery">
                 {% for image in product.images %}
-                  <figure class="img" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject" ><a class="photoswipe zoom_enabled zoom_image zoom" rel="image_thumb" data-size="800x1000" href="{% if section.settings.enable_popup %}{{ image.src | img_url: product_image_size }} {% else %} # {% endif %}"><img class="lazyload" src="{{ image.src | img_url: product_image_size }}" alt="{{ image.alt | escape }}" >
-                   </a></figure>
+                <figure class="img" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject" ><a class="photoswipe zoom_enabled zoom_image zoom" rel="image_thumb" data-size="800x1000" href="{% if section.settings.enable_popup %}{{ image.src | img_url: product_image_size }} {% else %} # {% endif %}"><img class="lazyload" src="{{ image.src | img_url: product_image_size }}" alt="{{ image.alt | escape }}" >
+                  </a>
+                </figure>
                 {% endfor %}
               </div>
               {% if product.description contains '[/video]' %}  
@@ -73,9 +81,36 @@
           <div class="slider-nav">
             {% for image in product.images %}
             <div class="img">
-              <a class="product-single__thumbnail product-single__thumbnail--{{ section.id }}" href="#" data-image="{{ image.src | img_url: product_image_size }}" data-zoom-image="{{ image.src | img_url: 'master' }}" data-imgvarian="{{ image.src }} | img_url" >
-                <img class="img-responsive lazyload" src="{{ image.src | img_url: product_thumb_size }}" alt="{{ image.alt | escape }}">
+              <a class="product-single__thumbnail product-single__thumbnail--{{ section.id }}" href="javascript:void(0)" 
+                 data-image="{{ image.src | img_url: product_image_size }}" 
+                 data-zoom-image="{{ image.src | img_url: 'master' }}" 
+                 data-imgvarian="{{ image.src }} | img_url"
+                 data-color="{{image.alt}}">
+                <img class="img-responsive lazyload" src="{{ image.src | img_url: product_thumb_size, crop: 'center' }}" alt="{{ image.alt | escape }}">
               </a>
+            </div>
+            {% endfor %}
+          </div>
+          
+          <div class="hidden">
+            {% for image in product.images %}
+            <div class="thumb-hidden" data-color="{{image.alt}}">
+              <div class="js-thumb">
+                <div class="img">
+                  <a class="product-single__thumbnail--{{ section.id }}" href="javascript:void(0)"
+                     data-image="{{ image.src | img_url: product_image_size }}" 
+                     data-zoom-image="{{ image.src | img_url: 'master' }}" 
+                     data-imgvarian="{{ image.src }} | img_url"
+                     >
+                    <img class="img-responsive lazyload" src="{{ image.src | img_url: product_thumb_size, crop: 'center' }}" alt="{{ image.alt | escape }}">
+                  </a>
+                </div>
+              </div>
+              <div class="js-main">
+                <figure class="img " itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject" ><a class="photoswipe zoom_enabled zoom_image zoom" rel="image_thumb" data-size="800x1000" href="{% if section.settings.enable_popup %}{{ image.src | img_url: product_image_size }} {% else %} # {% endif %}"><img class="lazyload" src="{{ image.src | img_url: product_image_size }}" alt="{{ image.alt | escape }}" >
+                  </a>
+                </figure>
+              </div>
             </div>
             {% endfor %}
           </div>
@@ -145,6 +180,38 @@
 
           </div>
           <script>
+            var optionSlickMainDetail = {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: true,
+              fade: true,
+              dots: true,
+              asNavFor: '.slider-nav',
+            }
+            var optionSlickNavDetail = {
+              slidesToShow: 99,
+              slidesToScroll: 1,
+              asNavFor: '.slider-for',
+              infinite: false,
+              dots: false,
+              arrows:false,
+              focusOnSelect: true,
+              vertical: true,
+              verticalSwiping: true,
+              responsive: [
+                {
+                  breakpoint: 767,
+                  settings: {
+                    slidesToShow: 4,
+                    slidesToScroll: 4,
+                    vertical: false,
+                    verticalSwiping: false,
+                    asNavFor: '.slider-for',
+                  }
+                }
+              ]
+            }
+            
             $(document).ready(function() {
               {% if section.settings.enable_zoom %}
               $('.zoom_image').zoom();
@@ -372,34 +439,9 @@
             // execute above function
             initPhotoSwipeFromDOM('.my-gallery');
             {% endif %}
-              $('.slider-for').slick({
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                arrows: true,
-                fade: true,
-                asNavFor: '.slider-nav',
-              });
-              $('.slider-nav').slick({
-                slidesToShow: 4,
-                slidesToScroll: 1,
-                asNavFor: '.slider-for',
-                infinite: false,
-                dots: false,
-                arrows:false,
-                focusOnSelect: true,
-                vertical: true,
-                verticalSwiping: true,
-                responsive: [
-                  {
-                    breakpoint: 767,
-                    settings: {
-                      vertical: false,
-                      verticalSwiping: false,
-                      asNavFor: '.slider-for',
-                    }
-                  }
-                ]
-              }); 
+              $('.slider-for').slick(window.optionSlickMainDetail);
+
+              $('.slider-nav').slick(window.optionSlickNavDetail);
 
                {% if section.settings.enable_zoom %}
                 zoom_mobile();
@@ -429,8 +471,13 @@
         <div class="{{ product_description_width }} product-right-column">
           <div class="product-single__meta">
             
-            <h1 itemprop="name" class="product-single__title">{{ product.title }}</h1>
-             
+            <h1 itemprop="name" class="product-single__title">{{ product.title }}
+            
+              {% if product.metafields.info.set != blank %}
+              <br /><span class="field-set">{{product.metafields.info.set}}</span>
+              {% endif %}
+            </h1>
+
             <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
               <meta itemprop="priceCurrency" content="{{ shop.currency }}">
         
@@ -460,12 +507,7 @@
                 <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
               </div>
               {% endif %}
-              {% if product.description contains '[/shortdesc]' %}  
-              {% assign shortdesc = product.description | split: '[shortdesc]' | last %}
-                <p class="description">
-                  {{ shortdesc | split: '[/shortdesc]' | first }}
-                </p>
-              {% endif %}
+              
               <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="AddToCartForm-id form-ajaxtocart clearfix">
                 <div class="proVariants clearfix">
                   <select name="id" id="productSelect" class="product-single__variants">
@@ -494,9 +536,57 @@
                   <i class="fa fa-shopping-cart"></i>
                   <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
                 </button>
-                
                 </div>
               </form>
+              
+              <div class="variant-content variant-00">
+                {% if product.description contains '[/shortdesc]' %}  
+                {% assign shortdesc = product.description | split: '[shortdesc]' | last %}
+                <p class="description">
+                  {{ shortdesc | split: '[/shortdesc]' | first }}
+                </p>
+                {% endif %}
+              </div>
+              
+              {%- for variant in product.variants -%}
+              {%- assign showVariant = false -%}
+              {%- if variant.metafields.global.tab1 != blank or variant.metafields.global.tab2 != blank or variant.metafields.global.tab3 != blank or variant.metafields.global.tab4 != blank -%}
+             	 {%- assign showVariant = true -%}
+              {%- endif -%}
+                {%- if showVariant -%}
+                <div class="variant-content variant-{{variant.id}} hidden">
+                  <ul class="nav nav-tabs" role="tablist">
+                    {%- if variant.metafields.global.tab1 != blank -%}
+                    <li class="nav-item active">
+                      <a class="nav-link active" data-toggle="tab" href="#tab1-{{variant.id}}" role="tab" aria-selected="true">{{settings.variant_tab1}}</a>
+                    </li>
+                    {%- endif -%}
+                    {%- if variant.metafields.global.tab2 != blank -%}
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#tab2-{{variant.id}}" role="tab" aria-selected="false">{{settings.variant_tab2}}</a>
+                    </li>
+                    {%- endif -%}
+                    {%- if variant.metafields.global.tab3 != blank -%}
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#tab3-{{variant.id}}" role="tab" aria-selected="false">{{settings.variant_tab3}}</a>
+                    </li>
+                    {%- endif -%}
+                    {%- if variant.metafields.global.tab4 != blank -%}
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#tab4-{{variant.id}}" role="tab" aria-selected="false">{{settings.variant_tab4}}</a>
+                    </li>
+                    {%- endif -%}
+                  </ul>
+                  <div class="tab-content">
+                    <div class="tab-pane fade active in" id="tab1-{{variant.id}}" role="tabpanel">{{variant.metafields.global.tab1}}</div>
+                    <div class="tab-pane fade" id="tab2-{{variant.id}}" role="tabpanel">{{variant.metafields.global.tab2}}</div>
+                    <div class="tab-pane fade" id="tab3-{{variant.id}}" role="tabpanel">{{variant.metafields.global.tab3}}</div>
+                    <div class="tab-pane fade" id="tab4-{{variant.id}}" role="tabpanel">{{variant.metafields.global.tab4}}</div>
+                  </div>
+                </div>
+                {%- endif -%}
+              {%- endfor -%}
+              
               {% comment %} Bỏ wishlist ra ngoài form AddToCart để có thể hoạt động {% endcomment %}
               {%- if settings.theme_wishlist_enable -%}
                  {% if settings.wishlist_nologin %}
@@ -879,26 +969,30 @@
                   <div id="idTab6" class="tab-pane page-product-box">
                     <div class="row">
                       <div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
-                        <form id="form_faq">
-                          <h4>{{'products.product.title_faq' | t}}</h4><br>
-                          <div class="form-group">
-                            <input type="text" class="form-control" placeholder="{{'contact.form.name' | t}}" name="faq-name" id="faq_name" required="required">
-                          </div>
-                          <div class="form-group">
-                            <input type="text" class="form-control" placeholder="{{'contact.form.email' | t}}" name="faq-email" id="faq_email" required="required">
-                          </div>
-                          <div class="form-group">
-                            <input type="text" class="form-control" placeholder="{{'contact.form.subject' | t}}" name="faq-subject-line" id="faq_title" required="required">
-                          </div>
-                          <div class="form-group">
-                            <textarea class="form-control" rows="5" placeholder="{{'contact.form.faq' | t}}" name="quote-question" id="faq_question" required="required"></textarea>
-                          </div>
-                          <button type="submit" id="btn_send_question" class="btn btn-primary" data-title="{{ product.title }}" data-href="{{ product.url }}">{{'products.product.submit_faq' | t}}</button>
-                        </form>
-                        <div id="list_err_question"></div>
+                        {% comment %}
+                        {% include 'shortcode' load: pages.faqs.content %}
+                        {% endcomment %}
+                        <div class="rte">
+                          <form id="form_faq">
+                            <h4>{{ 'products.product.title_faq' | t }}</h4><br>
+                            <div class="form-group">
+                              <input type="text" class="form-control" placeholder="Name" name="faq-name" id="faq_name" required="required">
+                            </div>
+                            <div class="form-group">
+                              <input type="text" class="form-control" placeholder="Email" name="faq-email" id="faq_email" required="required">
+                            </div>
+                            <div class="form-group">
+                              <input type="text" class="form-control" placeholder="Subject Line" name="faq-subject-line" id="faq_title" required="required">
+                            </div>
+                            <div class="form-group">
+                              <textarea class="form-control" rows="5" placeholder="Ask your question here" name="quote-question" id="faq_question" required="required"></textarea>
+                            </div>
+                            <button type="submit" id="btn_send_question" class="btn btn-primary" data-title="{{ product.title }}" data-href="{{ product.url }}">{{ 'products.product.submit_faq' | t }}</button>
+                          </form>
+                          <div id="list_err_question"></div>
+                        </div>
                       </div>
                     </div>
-                    <div id="list_err_question"></div>
                   </div>
                   {% endif %}
 

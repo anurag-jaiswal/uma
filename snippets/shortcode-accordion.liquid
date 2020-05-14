@@ -11,16 +11,17 @@
         {% capture shortCodeId %}{{shortCodeId | remove: lastTime}}{% endcapture %}
         </div>
     {% when 'new accordion' %}
-        <div class="panel panel-info">
+        <div class="panel panel-info panel-info-{% increment counter %}">
+          	{% assign iCount = counter %}
     	   {% capture headingId %}{{ 'now' | date: "%N" }}{% endcapture %}
             <div class="panel-heading" role="tab" id="heading-{{headingId}}">
                 <h4 class="panel-title">
-        	        <a data-toggle="collapse" data-parent="#accordion-{{shortCodeId | split : '-' | last}}" href="#collapse{{headingId}}" aria-expanded="true" aria-controls="collapseOne" class="collapsed">
+        	        <a data-toggle="collapse" data-parent="#accordion-{{shortCodeId | split : '-' | last}}" href="#collapse{{headingId}}-{{iCount}}" aria-expanded="true" aria-controls="collapseOne" class="collapsed">
                         {% if accordionTitle != '' %}{{accordionTitle}}{% endif %}
         	        </a>
                 </h4>
             </div>
-            <div id="collapse{{headingId}}" class="panel-collapse collapse{% if accordionActive == '1' %} in{% endif %}" role="tabpanel" aria-labelledby="heading-{{headingId}}">
+            <div id="collapse{{headingId}}-{{iCount}}" class="panel-collapse collapse{% if accordionActive == '1' %} in{% endif %}" role="tabpanel" aria-labelledby="heading-{{headingId}}">
       		    <div class="panel-body">
     {% when 'end accordion' %}
                 </div>

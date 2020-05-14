@@ -1,3 +1,11 @@
+{% assign variantMultipleImages = false %}
+
+{% for tag in product.tags %}
+  {% if tag == 'variant_multiple_images' %}
+      {% assign variantMultipleImages = true %}
+      {% break %}
+  {% endif %}
+{% endfor %}
 {% include 'breadcrumb' %}
 <div class="product-template-detail" data-section-id="{{ section.id }}" data-section-type="productlists">
   {% include section.settings.product-template-layout %}
@@ -580,12 +588,63 @@
   });
 </script>
 <script type="text/javascript">
+  var checkVariantMultipleImages = {{variantMultipleImages}};
+  
+  function swatchColorDisplay(){
+    var allColors = $('.swatch-element.color').find('[type=radio]'),
+        $slideNav = $('.slider-nav'),
+        $slideFor = $('.slider-for'),
+        arrayOptionColors = [];
+
+    $('.thumb-hidden').each(function(){
+      var thumbColor = $(this).data('color');
+      if (arrayOptionColors.indexOf(thumbColor) === -1){
+        arrayOptionColors.push($(this).data('color'))
+      }
+    })
+
+    for (var i = 0; i < allColors.length; i++) {
+      var selectColor = $(allColors[i]).val();
+
+      // If selected variant and have alt option
+      if ($(allColors[i]).is(':checked') && arrayOptionColors.indexOf(selectColor) !== -1){
+        $slideNav.slick('unslick').html('');
+        $slideFor.slick('unslick').html('');
+        $('.zoom_image').trigger('zoom.destroy');
+
+        $('.thumb-hidden').each(function() {
+          var thumbColor = $(this).data('color');
+          if (selectColor === thumbColor){
+            var thumItem = $(this).find('.js-thumb').html(),
+                mainItem = $(this).find('.js-main').html();
+            $(this).find('.js-thumb').find('a').addClass('product-single__thumbnail');
+            $slideNav.append(thumItem);
+            $slideFor.append(mainItem);
+          }
+        });
+
+        $slideNav.slick(window.optionSlickNavDetail);
+        $slideFor.slick(window.optionSlickMainDetail);
+        $('.zoom_image').zoom();
+      }
+    }
+  }
     
     function selectCallback(variant, selector) {
         var addToCart = $("#AddToCart"),
             productPrice = $(".product-single__meta #ProductPrice-{{ section.id }}"),
             comparePrice = $(".product-single__meta #ComparePrice-{{ section.id }}");
         if (variant) {
+              $('.variant-content').addClass('hidden');
+              var variantClass = '.variant-'+variant.id;
+              if ($(variantClass).length > 0){
+                $(variantClass).removeClass('hidden');
+              }else{
+              	$('.variant-00').removeClass('hidden');	
+              }
+              if (window.checkVariantMultipleImages){
+                swatchColorDisplay();
+              }
             if (variant.available) {
                 addToCart.removeClass('disabled').removeAttr('disabled');
                 $(addToCart).find("span").text("{{ 'products.product.add_to_cart' | t }}");
@@ -607,7 +666,7 @@
             }        
             var form = $('#' + selector.domIdPrefix).closest('form');
             for (var i=0,length=variant.options.length; i<length; i++) {
-                var radioButton = form.find('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]');
+                var radioButton = form.find(".swatch[data-option-index='" + i + "'] :radio[value='" + variant.options[i] +"']");
                 if (radioButton.size()) {
                     radioButton.get(0).checked = true;
                 }
@@ -628,17 +687,19 @@
 			$(addToCart).find("span").text("{{ 'products.product.unavailable' | t }}");
       $('.variant-sku').empty();
 		}
-        //find thumb and click on it                                   
-		if (variant && variant.featured_image) {
-            $('.product-single__thumbnail').each(function(index){
-              if(variant.featured_image.src.indexOf($(this).data('zoom-image')) !== -1){
-                $(this).trigger("click");
-                var slider = $('.slider-nav');
-                slider[0].slick.slickGoTo(index - 1);
-                return false;
+        //find thumb and click on it   
+              if (window.checkVariantMultipleImages === false){
+                if (variant && variant.featured_image) {
+                  $('.product-single__thumbnail').each(function(index){
+                    if(variant.featured_image.src.indexOf($(this).data('zoom-image')) !== -1){
+                      $(this).trigger("click");
+                      var slider = $('.slider-nav');
+                      slider[0].slick.slickGoTo(index - 1);
+                      return false;
+                    }
+                  });
+                }
               }
-            });
-        }
     }
     $(document).ready(function() {
         new Shopify.OptionSelectors('productSelect', {

@@ -568,6 +568,41 @@
         "label": "Font Family",
         "options": [
           {
+            "value": "Brandon_bld",
+            "label": "Brandon Bld",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_blk",
+            "label": "Brandon Blk",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_med",
+            "label": "Brandon Med",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_reg",
+            "label": "Brandon Reg",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_reg_it",
+            "label": "Brandon Reg It",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_light",
+            "label": "Brandon Light",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_thin",
+            "label": "Brandon Thin",
+            "group": "Sans-serif"
+          },
+          {
             "value": "Helvetica, Arial, sans-serif",
             "label": "Helvetica\/Arial",
             "group": "Sans-serif"
@@ -625,6 +660,41 @@
         "id": "theme_font_family_tertiary",
         "label": "Font Family Tertiary",
         "options": [
+          {
+            "value": "Brandon_bld",
+            "label": "Brandon Bld",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_blk",
+            "label": "Brandon Blk",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_med",
+            "label": "Brandon Med",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_reg",
+            "label": "Brandon Reg",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_reg_it",
+            "label": "Brandon Reg It",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_light",
+            "label": "Brandon Light",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Brandon_thin",
+            "label": "Brandon Thin",
+            "group": "Sans-serif"
+          },
           {
             "value": "Helvetica, Arial, sans-serif",
             "label": "Helvetica\/Arial",
@@ -1410,6 +1480,10 @@
         "content": "=== * Product Item Config * ==="
       },
       {
+        "type": "paragraph",
+        "content": "💡 [Enter product set here.](\/admin\/bulk?resource_name=Product&edit=metafields.info.set)"
+      },
+      {
         "type": "radio",
         "id": "style_grid_item",
         "label": "Select Style Product Grid Item",
@@ -1546,6 +1620,35 @@
         "id": "theme_wishlist_page",
         "label": "Wishlist Page",
         "info": "Choose wishlist page. Goto Pages and Add a page for wishlist. You must select templates \"page.wishlist\"."
+      }
+    ]
+  },
+  {
+    "name": "Variant tab",
+    "settings": [
+      {
+        "type": "text",
+        "id": "variant_tab1",
+        "label": "Tab title 1",
+        "default": "Tab title 1"
+      },
+      {
+        "type": "text",
+        "id": "variant_tab2",
+        "label": "Tab title 2",
+        "default": "Tab title 2"
+      },
+      {
+        "type": "text",
+        "id": "variant_tab3",
+        "label": "Tab title 3",
+        "default": "Tab title 3"
+      },
+      {
+        "type": "text",
+        "id": "variant_tab4",
+        "label": "Tab title 4",
+        "default": "Tab title 4"
       }
     ]
   },

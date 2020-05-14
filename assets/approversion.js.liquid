@@ -383,10 +383,6 @@ $(function(){
     },function(){
       $('.cart_mini').removeClass('open-cart');
     });
-
-    $( "body .apQtyAdjust " ).click(function() {
-      console.log( "Handler for .click() called." );
-    }); 
     
 });
 {% endif %}
@@ -416,8 +412,7 @@ function userLogin(){
             	alert('{{ 'header.userlogin.login_success' | t }}');
               }
         },
-        error:function(){
-          console.log("{{ 'header.userlogin.login_fail' | t }}");          
+        error:function(){          
         }
       })
     });
@@ -573,7 +568,6 @@ function getCookieVal (offset) {
 												CountCookie();	
 											},
 						error: function() {
-							console.log("There have error data. Please refresh page and try again!");
 						}
 					});
 				}
@@ -727,7 +721,6 @@ $(function(){
         
         var constraint = (Shopify.queryParams.constraint);
         tag_current = constraint.split("+");
-        console.log("tag_current" +  tag_current);
         for(i=0;i<tag_current.length;i++){
           var param='';
           for(j=0;j<tag_current.length;j++){
@@ -760,8 +753,7 @@ $(function(){
           tag_current_name = tag_current_name.replace(lang,'').replace(arr1[1],'');          
           str_current +="<li>" + decodeURIComponent(tag_current_name.replace("_",' ').replace("_",' ')) + '<a href="'+link+'">x</a>' + "</li>";
         }
-        str_current +='</ul>'
-        console.log(str_current);
+        str_current +='</ul>';
         $("div.list-current-tag").html(str_current);
       }
       var arr_tag = process_tag(arr_all_list_tag);
@@ -955,16 +947,13 @@ function process_tag_current() {
            link += '?constraint=' + array.join("+");
         }
       }
-      console.log(Shopify.queryParams.constraint);
       
       var str='<div class="catalog_filters block sidebarCategories">';
       str += '<h4 class="title_block">'+ name + '</h4>';
       if(current_tag != ''){
         str += '<a href="'+ link +'" class="clear-filter">' + '{{ 'collections.general.filter_tag_view_clear'| t}} ' + '</a>';
       }
-      str += '<div class="block_content block_content_filter"><ul class="listSidebar list-unstyled">'
-	 // console.log(arr_current_tag);
-     // console.log(Shopify.queryParams.constraint);
+      str += '<div class="block_content block_content_filter"><ul class="listSidebar list-unstyled">';
       for(i=0;i<value.length;i++){
         if(value[i]["tag"].indexOf(tag_type)>=0){
           
@@ -992,7 +981,6 @@ function process_tag_current() {
           }else{
             var link =baseurl + '?constraint=' + param + "+" + value[i]["tag"];
           }
-          console.log(param);
           link = link.replace("=+","=");
           str += '<li class="advanced-filter">';
           if(value[i]["count"] > 0 {% unless settings.use_multiple_filter %}&& (value[i]["tag"] == current_tag || current_tag==''){% endunless %}){            
@@ -1043,13 +1031,11 @@ function process_tag_current() {
     
     if(typeof(c)=="undefined") c = currentLink;
       
-    console.log("c=" + c);
       if($("#product_list").hasClass('list')){
         c+='&view=list';
       }else{
         c+='&view=grid';
       }
-    console.log("c=" + c);  
     return $.ajax({
         type: "GET",
         url: c,
@@ -1162,7 +1148,6 @@ function updateFreeShip(cart){
   }else{
     $("div.free-ship-lable").html($("div.free-ship-lable").html().replace("%1%",0));
   }
-     //console.log(Shopify.formatMoney(free_ship - cart.total_price, theme.moneyFormat));
     {% if settings.show_multiple_currencies %}
   Currency.convertAll(theme.shop_currency, jQuery('#currencies a.selected').attr('data-currency'));
   {% endif %}
